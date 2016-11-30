@@ -21,10 +21,10 @@ def mass_upload(number):
             'name': res_name,
             }
     headers = {'Authorization': api_key}
-    
+
     fn = ['1.pdf', '2.pdf', '3.pdf']
     fnames = map(lambda name: os.path.join(pydir, 'example_files', name), fn)
-    
+
     # we try to keep the actual upload method as clean as possible (only the
     # request) to guarantee comparable timer values. So this function declares
     # the random variables and then calls upload()
@@ -44,7 +44,7 @@ def mass_upload(number):
         assert req.status_code == 200
 
     start = time()
-    times = map(lambda n: para(n), xrange(1, number + 1))
+    times = map(para, xrange(1, number + 1))
     end = time()
 
     data = dict(
@@ -53,7 +53,7 @@ def mass_upload(number):
         maxi=max(times),
         avg=sum(times) / float(number),
         sumi=int(end - start)
-        )
+    )
 
     print("""
 Uploaded {number} resources in {sumi} seconds.
@@ -69,12 +69,12 @@ def mass_delete():
     """
     pkg = _package_show(pkg_name)
     resources = filter(lambda res: res['name'] == res_name, pkg['resources'])
-    
+
     @timer
     def del_res():
         printi = lambda i: print('deleted resource {}'.format(i))
         map(lambda res: juxt(_resource_delete, printi)(res['id']), resources)
-    
+
     print("{} resources deleted in {} seconds".format(len(resources),
         int(del_res())))
 
@@ -89,7 +89,7 @@ def timer(func):
 
 
 def url(cmd):
-    return "{}/api/action/{}".format(url_base, cmd) 
+    return "{}/api/action/{}".format(url_base, cmd)
 
 
 def _resource_delete(res_id):
@@ -108,5 +108,3 @@ def _package_show(pkg_id):
     assert req.status_code == 200
     content = json.loads(req.content)
     return content['result']
-
-
